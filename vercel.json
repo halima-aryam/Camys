@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "buildCommand": "node build.js",
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/images/(.*)",
+      "dest": "/public/images/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

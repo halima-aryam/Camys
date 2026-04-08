@@ -1,0 +1,8 @@
+{
+  "name": "camys-merch-gallery",
+  "version": "1.0.0",
+  "description": "Camy's Anime Merch Gallery",
+  "scripts": {
+    "build": "node build.js"
+  }
+}

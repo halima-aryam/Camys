@@ -1,0 +1,33 @@
+backend:
+  name: github
+  repo: halima-aryam/camys
+  branch: main
+  base_url: https://camys.vercel.app
+  auth_endpoint: api/auth
+
+media_folder: "public/images"
+public_folder: "/images"
+
+site_url: "https://camys.vercel.app"
+
+collections:
+  - name: "products"
+    label: "Products"
+    folder: "content/products"
+    create: true
+    slug: "{{slug}}"
+    format: "json"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Price (TZS)", name: "price", widget: "number" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Outerwear", value: "outerwear" }
+          - { label: "Jewellery", value: "jewellery" }
+          - { label: "Keychains", value: "keychains" }
+      - { label: "Series / Tag", name: "tag", widget: "string" }
+      - { label: "Featured Image", name: "image", widget: "image" }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - { label: "Badge (e.g. New, Popular)", name: "badge", widget: "string", required: false }
