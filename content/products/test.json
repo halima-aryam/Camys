@@ -1,9 +1,9 @@
 {
-  "title": "Test",
+  "title": "test",
   "price": 10000,
   "category": "jewellery",
-  "tag": "Test",
-  "image": "/images/IMG_6441.jpeg",
-  "description": "Test test",
-  "badge": "New"
+  "tag": "test teest",
+  "image": "/images/keychainone.jpeg",
+  "description": "hello ths is a test",
+  "badge": "Popular"
 }
