@@ -395,6 +395,72 @@ body::after{
   .shop{max-width:1160px;}
   .about{max-width:1160px;}
 }
+
+/* ══ CART DRAWER ══ */
+.nav-cart {
+  background:var(--pk); color:var(--bg);
+  border:none; border-radius:30px;
+  padding:8px 14px; font-family:'Syne',sans-serif;
+  font-size:10px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  transition:transform 0.1s;
+}
+.nav-cart:active { transform:scale(0.96); }
+.cart-badge {
+  background:var(--bg); color:var(--pk);
+  font-size:9px; padding:2px 6px; border-radius:10px;
+  display:none;
+}
+.cart-badge.visible { display:inline-block; }
+
+.cart-overlay{position:fixed;inset:0;background:rgba(13,10,15,0.6);z-index:900;opacity:0;pointer-events:none;transition:opacity 0.35s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.cart-overlay.open{opacity:1;pointer-events:all;}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);background:var(--bg);z-index:901;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);display:flex;flex-direction:column;border-left:1px solid rgba(244,114,182,0.1);}
+.cart-drawer.open{transform:translateX(0);}
+.cart-header{padding:1.5rem;border-bottom:1px solid rgba(244,114,182,0.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cart-title{font-family:'Cinzel Decorative',serif;font-size:1.3rem;font-weight:400;color:var(--txt);}
+.cart-close{background:none;border:none;font-size:1.4rem;color:var(--muted);cursor:pointer;padding:0.2rem;line-height:1;transition:color 0.2s;}
+.cart-close:hover{color:var(--pk);}
+
+.cart-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.2rem 1.5rem;min-height:0;}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1rem;color:var(--muted);}
+
+.cart-item{display:flex;gap:1rem;margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid rgba(244,114,182,0.1);}
+.cart-item:last-child{border-bottom:none;}
+.cart-item-thumb{width:70px;height:70px;flex-shrink:0;overflow:hidden;border-radius:2px;}
+.cart-item-thumb img{width:100%;height:100%;object-fit:cover;}
+.cart-item-details{flex:1;min-width:0;}
+.cart-item-name{font-family:'Cinzel Decorative',serif;font-size:1rem;margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt);}
+.cart-item-variant{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+.cart-item-price{font-size:0.95rem;color:var(--gold);font-weight:400;}
+
+.cart-item-remove{
+  background:none;border:none;color:var(--pk);font-size:10px;
+  cursor:pointer;padding:0.4rem 0;font-family:'Syne',sans-serif;
+  letter-spacing:1px;text-transform:uppercase;text-decoration:none;display:block;
+  margin-top:0.2rem;text-align:left;transition:opacity 0.2s;
+}
+.cart-item-remove:hover{opacity:0.7;}
+.qty-controls{display:flex;align-items:center;gap:0.5rem;margin-top:0.4rem;}
+.qty-btn{background:rgba(244,114,182,0.1);border:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;color:var(--pk);border-radius:2px;}
+.qty-num{font-size:0.9rem;min-width:20px;text-align:center;color:var(--txt);}
+
+.cart-footer{padding:1.5rem;border-top:1px solid rgba(244,114,182,0.1);flex-shrink:0;background:var(--bg);}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
+.cart-total-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.cart-total-price{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold);}
+.whatsapp-btn{width:100%;padding:15px;display:flex;align-items:center;justify-content:center;gap:9px;background:#25D366;color:#fff;border:none;border-radius:2px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.whatsapp-btn:hover{background:#1da851;}
+.whatsapp-btn svg{width:17px;height:17px;fill:#fff;flex-shrink:0;}
+.cart-note{font-size:10px;color:var(--muted);text-align:center;margin-top:1rem;line-height:1.6;}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(100px);background:var(--pk);color:var(--bg);padding:12px 24px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1000;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);pointer-events:none;white-space:nowrap;border-radius:30px;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+@media(min-width:680px){
+  .toast{bottom:2rem;}
+}
 </style>
 </head>
 <body>
@@ -402,9 +468,9 @@ body::after{
 <!-- TOP NAV -->
 <nav class="topnav">
   <div class="topnav-logo">Camy's</div>
-  <a href="https://wa.me/255793339160" target="_blank" class="topnav-ig">
-    <div class="dot"></div>DM to order
-  </a>
+  <button class="nav-cart" onclick="toggleCart()">
+    🛍 My Order <span class="cart-badge" id="cartBadge">0</span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -463,10 +529,10 @@ body::after{
       <div class="modal-note">
         Tap the button below to open WhatsApp and DM Camy directly to order this item. She'll confirm availability and arrange delivery 🌸
       </div>
-      <a href="#" target="_blank" class="modal-dm" id="modal-dm">
+      <button class="modal-dm" id="modal-dm" onclick="addCurrentToCart()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        DM to order on WhatsApp
-      </a>
+        Add to Order List
+      </button>
       <div class="modal-close-row">
         <button class="modal-close" id="modal-close">✕ close</button>
       </div>
@@ -482,28 +548,55 @@ body::after{
   <a href="#shop" class="bnav-item">
     <span class="bnav-icon">🛍</span>Shop
   </a>
-  <a href="https://wa.me/255793339160" target="_blank" class="bnav-item">
-    <span class="bnav-icon">💬</span>Order
+  <a href="#" onclick="toggleCart(); return false;" class="bnav-item">
+    <span class="bnav-icon">🛍</span>Order
   </a>
   <a href="https://www.instagram.com/camillia_lund" target="_blank" class="bnav-item">
     <span class="bnav-icon">📸</span>Instagram
   </a>
 </nav>
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h2 class="cart-title">My Order List</h2>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div style="font-size:2.5rem;opacity:0.2;">🛍</div>
+      <p style="font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">No items added yet</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-price" id="cartTotal">0 TSH</span>
+    </div>
+    <button class="whatsapp-btn" onclick="orderViaWhatsApp()">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.546 5.877L0 24l6.296-1.517A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.669-.498-5.213-1.37l-.374-.214-3.739.9.943-3.642-.238-.388A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Send Order via WhatsApp
+    </button>
+    <p class="cart-note">Pick everything you want first, then send one message to Camy — she'll confirm & arrange delivery. 🌸</p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
 const WA = "255793339160";
+let cart = [];
+let currentProduct = null;
 
 // Modal
 const modalBg = document.getElementById("modal-bg");
 const modalClose = document.getElementById("modal-close");
 
 function openModal(p){
+  currentProduct = p;
   document.getElementById("modal-img").src = p.img;
   document.getElementById("modal-tag").textContent = p.tag;
   document.getElementById("modal-name").textContent = p.name;
-  document.getElementById("modal-price").textContent = p.price + " TSH";
-  const msg = `Hi Camy's! I'd like to order: ${p.name}`;
-  document.getElementById("modal-dm").href = `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
+  document.getElementById("modal-price").textContent = p.price.toLocaleString() + " TSH";
   modalBg.classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -532,9 +625,10 @@ async function loadProducts() {
       fetch(`/content/products/${f}`).then(r => r.json())
     );
     const loaded = await Promise.all(promises);
-    products = loaded.map(p => ({
+    products = loaded.map((p, i) => ({
+      id: i + 1,
       name: p.title,
-      price: p.price + " TSH",
+      price: p.price,
       cat: p.category,
       tag: p.tag,
       img: p.image,
@@ -554,7 +648,6 @@ function render(cat){
   const list = cat === "all" ? products : products.filter(p => p.cat === cat);
   document.getElementById("count").textContent = list.length + " item" + (list.length !== 1 ? "s" : "");
   list.forEach((p, i) => {
-    const msg = `Hi Camy's! I'd like to order: ${p.name}`;
     const c = document.createElement("div");
     c.className = "card";
     c.style.animationDelay = i * 0.055 + "s";
@@ -566,13 +659,117 @@ function render(cat){
         <div class="card-tag">${p.tag}</div>
         <div class="card-name">${p.name}</div>
         <div class="card-footer">
-          <div class="card-price">${p.price}</div>
-          <a href="https://wa.me/${WA}?text=${encodeURIComponent(msg)}" target="_blank" class="card-btn" onclick="event.stopPropagation()">→</a>
+          <div class="card-price">${p.price.toLocaleString()} TSH</div>
+          <button class="card-btn" onclick="event.stopPropagation(); addToCart(${p.id})">🛍</button>
         </div>
       </div>`;
     c.addEventListener("click", () => openModal(p));
     g.appendChild(c);
   });
+}
+
+function addCurrentToCart() {
+  if(currentProduct) {
+    addToCart(currentProduct.id);
+    closeModal();
+  }
+}
+
+function addToCart(id) {
+  const p = products.find(p => p.id === id);
+  const ex = cart.find(i => i.id === id);
+  if (ex) ex.qty++;
+  else cart.push({...p, qty:1});
+  updateBadge();
+  renderCart();
+  showToast(`${p.name} added ✦`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateBadge();
+  renderCart();
+}
+
+function updateBadge() {
+  const n = cart.reduce((s,i) => s+i.qty, 0);
+  const b = document.getElementById('cartBadge');
+  b.textContent = n;
+  b.classList.toggle('visible', n > 0);
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+
+  if (!cart.length) {
+    footer.style.display = 'none';
+    container.innerHTML = `
+      <div class="cart-empty">
+        <div style="font-size:2.5rem;opacity:0.2;">🛍</div>
+        <p style="font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">No items added yet</p>
+      </div>`;
+    return;
+  }
+
+  footer.style.display = 'block';
+  const total = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  document.getElementById('cartTotal').textContent = `${total.toLocaleString()} TSH`;
+
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item" id="cart-item-${item.id}">
+      <div class="cart-item-thumb">
+        <img src="${item.img}" alt="${item.name}" loading="lazy"/>
+      </div>
+      <div class="cart-item-details">
+        <p class="cart-item-name">${item.name}</p>
+        <p class="cart-item-variant">${item.tag}</p>
+        <p class="cart-item-price">${(item.price * item.qty).toLocaleString()} TSH</p>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕ Remove item</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    cart = cart.filter(i => i.id !== id);
+  }
+  updateBadge();
+  renderCart();
+}
+
+function orderViaWhatsApp() {
+  if (!cart.length) return;
+  const total = cart.reduce((s,i) => s+i.price*i.qty, 0);
+  let msg = `*Hi Camy's! 🌸*\n\nI'd like to order the following items:\n\n`;
+  cart.forEach((item,i) => {
+    msg += `*${i+1}. ${item.name}*\n`;
+    msg += `   Quantity: ${item.qty}\n`;
+    msg += `   Price: ${(item.price*item.qty).toLocaleString()} TSH\n\n`;
+  });
+  msg += `*Total Amount: ${total.toLocaleString()} TSH*\n\nPlease let me know about availability and delivery! ✨`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function toggleCart() {
+  document.getElementById('cartOverlay').classList.toggle('open');
+  document.getElementById('cartDrawer').classList.toggle('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
 }
 
 document.getElementById("filters").addEventListener("click", e => {
