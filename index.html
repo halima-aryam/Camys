@@ -456,8 +456,8 @@ body::after{
 .cart-note{font-size:10px;color:var(--muted);text-align:center;margin-top:1rem;line-height:1.6;}
 
 /* TOAST */
-.toast{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(100px);background:var(--pk);color:var(--bg);padding:12px 24px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1000;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);pointer-events:none;white-space:nowrap;border-radius:30px;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+.toast{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(100px);opacity:0;background:var(--pk);color:var(--bg);padding:12px 24px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1000;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.4s ease;pointer-events:none;white-space:nowrap;border-radius:30px;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 @media(min-width:680px){
   .toast{bottom:2rem;}
 }
@@ -660,7 +660,7 @@ function render(cat){
         <div class="card-name">${p.name}</div>
         <div class="card-footer">
           <div class="card-price">${p.price.toLocaleString()} TSH</div>
-          <button class="card-btn" onclick="event.stopPropagation(); addToCart(${p.id})">🛍</button>
+          <button class="card-btn" onclick="event.stopPropagation(); addToCart(${p.id})">→</button>
         </div>
       </div>`;
     c.addEventListener("click", () => openModal(p));
@@ -765,11 +765,13 @@ function toggleCart() {
   document.getElementById('cartDrawer').classList.toggle('open');
 }
 
+let toastTimeout;
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
 document.getElementById("filters").addEventListener("click", e => {
