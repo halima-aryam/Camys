@@ -396,7 +396,7 @@ body::after{
 <!-- TOP NAV -->
 <nav class="topnav">
   <div class="topnav-logo">Camy's</div>
-  <a href="https://ig.me/m/camillia_lund" target="_blank" class="topnav-ig">
+  <a href="https://wa.me/255793339160" target="_blank" class="topnav-ig">
     <div class="dot"></div>DM to order
   </a>
 </nav>
@@ -476,7 +476,7 @@ body::after{
   <a href="#shop" class="bnav-item">
     <span class="bnav-icon">🛍</span>Shop
   </a>
-  <a href="https://ig.me/m/camillia_lund" target="_blank" class="bnav-item">
+  <a href="https://wa.me/255793339160" target="_blank" class="bnav-item">
     <span class="bnav-icon">💬</span>Order
   </a>
   <a href="https://www.instagram.com/camillia_lund" target="_blank" class="bnav-item">
@@ -485,7 +485,7 @@ body::after{
 </nav>
 
 <script>
-const IG = "camillia_lund";
+const WA = "255793339160";
 
 // Modal
 const modalBg = document.getElementById("modal-bg");
@@ -496,7 +496,8 @@ function openModal(p){
   document.getElementById("modal-tag").textContent = p.tag;
   document.getElementById("modal-name").textContent = p.name;
   document.getElementById("modal-price").textContent = p.price + " TSH";
-  document.getElementById("modal-dm").href = "https://ig.me/m/" + IG;
+  const msg = `Hi Camy's! I'd like to order: ${p.name}`;
+  document.getElementById("modal-dm").href = `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
   modalBg.classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -547,6 +548,7 @@ function render(cat){
   const list = cat === "all" ? products : products.filter(p => p.cat === cat);
   document.getElementById("count").textContent = list.length + " item" + (list.length !== 1 ? "s" : "");
   list.forEach((p, i) => {
+    const msg = `Hi Camy's! I'd like to order: ${p.name}`;
     const c = document.createElement("div");
     c.className = "card";
     c.style.animationDelay = i * 0.055 + "s";
@@ -559,7 +561,7 @@ function render(cat){
         <div class="card-name">${p.name}</div>
         <div class="card-footer">
           <div class="card-price">${p.price}</div>
-          <a href="https://ig.me/m/${IG}" target="_blank" class="card-btn" onclick="event.stopPropagation()">→</a>
+          <a href="https://wa.me/${WA}?text=${encodeURIComponent(msg)}" target="_blank" class="card-btn" onclick="event.stopPropagation()">→</a>
         </div>
       </div>`;
     c.addEventListener("click", () => openModal(p));
