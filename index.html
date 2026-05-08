@@ -619,25 +619,27 @@ let products = [];
 
 async function loadProducts() {
   try {
-    const index = await fetch('/content/products/index.json');
-    const filenames = await index.json();
-    const promises = filenames.map(f =>
-      fetch(`/content/products/${f}`).then(r => r.json())
-    );
-    const loaded = await Promise.all(promises);
-    products = loaded.map((p, i) => ({
-      id: i + 1,
+    const PROJECT_ID = 'lx69lds8';
+    const DATASET = 'production';
+    const QUERY = encodeURIComponent('*[_type == "product"]{_id, title, price, category, tag, "imageUrl": image.asset->url, description, badge}');
+    const url = `https://${PROJECT_ID}.api.sanity.io/v2022-03-07/data/query/${DATASET}?query=${QUERY}`;
+    
+    const response = await fetch(url);
+    const { result } = await response.json();
+    
+    products = result.map(p => ({
+      id: p._id,
       name: p.title,
       price: p.price,
       cat: p.category,
-      tag: p.tag,
-      img: p.image,
-      desc: p.description,
+      tag: p.tag || '',
+      img: p.imageUrl,
+      desc: p.description || '',
       badge: p.badge || null,
     }));
     render("all");
   } catch(err) {
-    console.error('Failed to load products:', err);
+    console.error('Failed to load products from Sanity:', err);
   }
 }
 
@@ -660,7 +662,7 @@ function render(cat){
         <div class="card-name">${p.name}</div>
         <div class="card-footer">
           <div class="card-price">${p.price.toLocaleString()} TSH</div>
-          <button class="card-btn" onclick="event.stopPropagation(); addToCart(${p.id})">→</button>
+          <button class="card-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">→</button>
         </div>
       </div>`;
     c.addEventListener("click", () => openModal(p));
@@ -726,11 +728,11 @@ function renderCart() {
         <p class="cart-item-variant">${item.tag}</p>
         <p class="cart-item-price">${(item.price * item.qty).toLocaleString()} TSH</p>
         <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+          <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
           <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+          <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
         </div>
-        <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕ Remove item</button>
+        <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">✕ Remove item</button>
       </div>
     </div>
   `).join('');
