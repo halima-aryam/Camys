@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Syne:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-family-sans: 'Syne', sans-serif !important;
+  --font-family-monospace: monospace !important;
+}
+
+/* Optional: Make the background dark to match the body of the frontend */
+body {
+  background-color: #0d0a0f !important;
+}
