@@ -4,6 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import {myTheme} from './theme'
 import './studio.css'
+import {media} from 'sanity-plugin-media'
 import React from 'react'
 
 function CustomLogo() {
@@ -25,7 +26,7 @@ export default defineConfig({
   projectId: 'lx69lds8',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool(), visionTool(), media()],
 
   schema: {
     types: schemaTypes,
