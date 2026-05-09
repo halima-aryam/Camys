@@ -9,3 +9,19 @@
 body {
   background-color: #0d0a0f !important;
 }
+
+/* Fix Publish and Primary Button Visibility */
+[data-ui="Button"][data-tone="positive"],
+[data-ui="Button"][data-tone="primary"] {
+  background-color: #f472b6 !important;
+  color: #0d0a0f !important;
+  font-weight: 600 !important;
+}
+
+[data-ui="Button"][data-tone="positive"][data-disabled="true"],
+[data-ui="Button"][data-tone="primary"][data-disabled="true"] {
+  background-color: #1c1326 !important;
+  color: #f5e6ef !important;
+  border: 1px solid rgba(244,114,182,0.4) !important;
+  opacity: 0.7 !important;
+}
