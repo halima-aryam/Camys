@@ -26,6 +26,7 @@ export const product = {
           {title: 'Keychains', value: 'keychains'},
           {title: 'Posters', value: 'posters'},
           {title: 'Apparel', value: 'apparel'},
+          {title: 'Accessories', value: 'accessories'},
         ],
         layout: 'dropdown',
       },
@@ -44,6 +45,19 @@ export const product = {
         hotspot: true,
       },
       validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'images',
+      title: 'Additional Images',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
     },
     {
       name: 'description',

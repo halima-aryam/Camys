@@ -296,10 +296,49 @@ body::after{
   background:rgba(244,114,182,0.25);
   margin:12px auto 0;
 }
-.modal-img{
-  width:100%;aspect-ratio:1;object-fit:cover;
-  display:block;margin-top:1rem;
-  filter:brightness(0.92) saturate(1.05);
+.modal-gallery {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+}
+.modal-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.modal-carousel::-webkit-scrollbar {
+  display: none;
+}
+.modal-slide {
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+.modal-slide img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.92) saturate(1.05);
+}
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0.75rem;
+}
+.dot-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(244, 114, 182, 0.25);
+  transition: all 0.2s;
+}
+.dot-indicator.active {
+  background: var(--pk);
+  transform: scale(1.2);
 }
 .modal-body{padding:1.25rem 1.25rem 0;}
 .modal-tag{
@@ -498,7 +537,7 @@ body::after{
   <div class="about-text">
     <div class="about-name">Camillia</div>
     <div class="about-handle">@camillia_lund</div>
-    <div class="about-desc">Your fave anime girl 🌸 Bringing you quality anime merch — jewellery, keychains & streetwear. DM on IG to order!</div>
+    <div class="about-desc">Your fave anime girl 🌸 Bringing you quality anime merch — jewellery, keychains & streetwear. Tap the button to add to your order list, then DM Camy on WhatsApp!</div>
   </div>
 </div>
 
@@ -512,6 +551,7 @@ body::after{
     <button class="fp active" data-cat="all">All</button>
     <button class="fp" data-cat="outerwear">Outerwear</button>
     <button class="fp" data-cat="jewellery">Jewellery</button>
+    <button class="fp" data-cat="accessories">Accessories</button>
     <button class="fp" data-cat="keychains">Keychains</button>
   </div>
   <div class="grid" id="grid"></div>
@@ -521,13 +561,16 @@ body::after{
 <div class="modal-bg" id="modal-bg">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
-    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-gallery">
+      <div class="modal-carousel" id="modal-carousel"></div>
+      <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
     <div class="modal-body">
       <div class="modal-tag" id="modal-tag"></div>
       <div class="modal-name" id="modal-name"></div>
       <div class="modal-price" id="modal-price"></div>
       <div class="modal-note">
-        Tap the button below to open WhatsApp and DM Camy directly to order this item. She'll confirm availability and arrange delivery 🌸
+        Tap the button below to add this item to your order list, then DM Camy on WhatsApp to place your order! 🌸
       </div>
       <button class="modal-dm" id="modal-dm" onclick="addCurrentToCart()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -593,16 +636,61 @@ const modalClose = document.getElementById("modal-close");
 
 function openModal(p){
   currentProduct = p;
-  document.getElementById("modal-img").src = p.img;
+  const carousel = document.getElementById("modal-carousel");
+  const dotsContainer = document.getElementById("carousel-dots");
+  
+  carousel.innerHTML = "";
+  dotsContainer.innerHTML = "";
+  
+  const allImages = [p.img, ...(p.images || [])].filter(Boolean);
+  
+  allImages.forEach(imgUrl => {
+    const slide = document.createElement("div");
+    slide.className = "modal-slide";
+    const img = document.createElement("img");
+    img.src = imgUrl;
+    img.alt = p.name;
+    slide.appendChild(img);
+    carousel.appendChild(slide);
+  });
+  
+  if (allImages.length > 1) {
+    allImages.forEach((_, idx) => {
+      const dot = document.createElement("div");
+      dot.className = "dot-indicator" + (idx === 0 ? " active" : "");
+      dotsContainer.appendChild(dot);
+    });
+    carousel.addEventListener("scroll", updateDots);
+  }
+  
   document.getElementById("modal-tag").textContent = p.tag;
   document.getElementById("modal-name").textContent = p.name;
   document.getElementById("modal-price").textContent = p.price.toLocaleString() + " TSH";
   modalBg.classList.add("open");
   document.body.style.overflow = "hidden";
 }
+
+function updateDots() {
+  const carousel = document.getElementById("modal-carousel");
+  const dots = document.querySelectorAll(".dot-indicator");
+  if (!carousel || dots.length === 0) return;
+  const width = carousel.offsetWidth;
+  if (width === 0) return;
+  const activeIndex = Math.round(carousel.scrollLeft / width);
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === activeIndex);
+  });
+}
+
 function closeModal(){
   modalBg.classList.remove("open");
   document.body.style.overflow = "";
+  
+  const carousel = document.getElementById("modal-carousel");
+  if (carousel) {
+    carousel.removeEventListener("scroll", updateDots);
+    carousel.scrollLeft = 0;
+  }
 }
 modalClose.addEventListener("click", closeModal);
 modalBg.addEventListener("click", e => { if(e.target === modalBg) closeModal(); });
@@ -621,7 +709,7 @@ async function loadProducts() {
   try {
     const PROJECT_ID = 'lx69lds8';
     const DATASET = 'production';
-    const QUERY = encodeURIComponent('*[_type == "product"]{_id, title, price, category, tag, "imageUrl": image.asset->url, description, badge}');
+    const QUERY = encodeURIComponent('*[_type == "product"]{_id, title, price, category, tag, "imageUrl": image.asset->url, "images": images[].asset->url, description, badge}');
     const url = `https://${PROJECT_ID}.api.sanity.io/v2022-03-07/data/query/${DATASET}?query=${QUERY}`;
     
     const response = await fetch(url);
@@ -631,9 +719,10 @@ async function loadProducts() {
       id: p._id,
       name: p.title,
       price: p.price,
-      cat: p.category,
+      cat: p.category === 'apparel' ? 'outerwear' : p.category,
       tag: p.tag || '',
       img: p.imageUrl,
+      images: p.images || [],
       desc: p.description || '',
       badge: p.badge || null,
     }));
