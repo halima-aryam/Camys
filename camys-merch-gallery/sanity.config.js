@@ -12,7 +12,7 @@ function CustomLogo() {
     style: { 
       fontFamily: '"Cinzel Decorative", serif', 
       color: '#f472b6', 
-      fontSize: '20px', 
+      fontSize: '24px', 
       fontWeight: 'bold',
       letterSpacing: '1px'
     } 
