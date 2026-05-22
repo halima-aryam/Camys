@@ -729,6 +729,7 @@ body::after{
 const WA = "255793339160";
 let cart = [];
 let currentProduct = null;
+let currentSlideImage = null;
 
 // Modal
 const modalBg = document.getElementById("modal-bg");
@@ -736,6 +737,7 @@ const modalClose = document.getElementById("modal-close");
 
 function openModal(p){
   currentProduct = p;
+  currentSlideImage = p.img;
   const carousel = document.getElementById("modal-carousel");
   const dotsContainer = document.getElementById("carousel-dots");
   
@@ -780,6 +782,12 @@ function updateDots() {
   dots.forEach((dot, idx) => {
     dot.classList.toggle("active", idx === activeIndex);
   });
+  
+  // Track active slide image
+  const allImages = [currentProduct.img, ...(currentProduct.images || [])].filter(Boolean);
+  if (activeIndex >= 0 && activeIndex < allImages.length) {
+    currentSlideImage = allImages[activeIndex];
+  }
 }
 
 function closeModal(){
@@ -906,23 +914,26 @@ function handleSort(val) {
 
 function addCurrentToCart() {
   if(currentProduct) {
-    addToCart(currentProduct.id);
+    addToCart(currentProduct.id, currentSlideImage);
     closeModal();
   }
 }
 
-function addToCart(id) {
+function addToCart(id, selectedImg) {
   const p = products.find(p => p.id === id);
-  const ex = cart.find(i => i.id === id);
+  if (!p) return;
+  const img = selectedImg || p.img;
+  const key = `${id}-${img.replace(/[^a-zA-Z0-9]/g, '')}`;
+  const ex = cart.find(i => i.key === key);
   if (ex) ex.qty++;
-  else cart.push({...p, qty:1});
+  else cart.push({...p, img: img, key: key, qty:1});
   updateBadge();
   renderCart();
   showToast(`${p.name} added ✦`);
 }
 
-function removeFromCart(id) {
-  cart = cart.filter(i => i.id !== id);
+function removeFromCart(key) {
+  cart = cart.filter(i => i.key !== key);
   updateBadge();
   renderCart();
 }
@@ -953,7 +964,7 @@ function renderCart() {
   document.getElementById('cartTotal').textContent = `${total.toLocaleString()} TSH`;
 
   container.innerHTML = cart.map(item => `
-    <div class="cart-item" id="cart-item-${item.id}">
+    <div class="cart-item" id="cart-item-${item.key}">
       <div class="cart-item-thumb">
         <img src="${item.img}" alt="${item.name}" loading="lazy"/>
       </div>
@@ -962,22 +973,22 @@ function renderCart() {
         <p class="cart-item-variant">${item.tag}</p>
         <p class="cart-item-price">${(item.price * item.qty).toLocaleString()} TSH</p>
         <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+          <button class="qty-btn" onclick="changeQty('${item.key}', -1)">−</button>
           <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
+          <button class="qty-btn" onclick="changeQty('${item.key}', +1)">+</button>
         </div>
-        <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">✕ Remove item</button>
+        <button class="cart-item-remove" onclick="removeFromCart('${item.key}')">✕ Remove item</button>
       </div>
     </div>
   `).join('');
 }
 
-function changeQty(id, delta) {
-  const item = cart.find(i => i.id === id);
+function changeQty(key, delta) {
+  const item = cart.find(i => i.key === key);
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) {
-    cart = cart.filter(i => i.id !== id);
+    cart = cart.filter(i => i.key !== key);
   }
   updateBadge();
   renderCart();
