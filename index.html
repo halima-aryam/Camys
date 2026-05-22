@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d0a0f">
 <title>Camy's Merch Gallery</title>
+<link rel="icon" type="image/png" href="public/images/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -605,7 +606,7 @@ body::after{
       Official Merch Drop
     </div>
     <h1 class="hero-title">Camy's<br>Merch<br>Gallery</h1>
-    <p class="hero-sub">Anime · Jewellery · Streetwear · TZ</p>
+    <p class="hero-sub">Anime · Jewellery · Cosplay · TZ</p>
     <a href="#shop" class="hero-btn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
       Browse the drop
@@ -619,7 +620,7 @@ body::after{
   <div class="about-text">
     <div class="about-name">Camillia</div>
     <div class="about-handle">@camillia_lund</div>
-    <div class="about-desc">Your fave anime girl 🌸 Bringing you quality anime merch — jewellery, keychains & streetwear. Tap the button to add to your order list, then DM Camy on WhatsApp!</div>
+    <div class="about-desc">Your fave anime girl 🌸 Bringing you quality anime merch — cosplay, jewellery & keychains. Tap the button to add to your order list, then DM Camy on WhatsApp!</div>
   </div>
 </div>
 
@@ -830,7 +831,7 @@ async function loadProducts() {
       id: p._id,
       name: p.title,
       price: p.price,
-      cat: p.category === 'apparel' ? 'outerwear' : p.category,
+      cat: p.category,
       tag: p.tag || '',
       img: p.imageUrl,
       images: p.images || [],

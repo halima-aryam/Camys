@@ -21,12 +21,10 @@ export const product = {
       type: 'string',
       options: {
         list: [
-          {title: 'Bags', value: 'bags'},
+          {title: 'Outerwear', value: 'outerwear'},
           {title: 'Jewellery', value: 'jewellery'},
-          {title: 'Keychains', value: 'keychains'},
-          {title: 'Posters', value: 'posters'},
-          {title: 'Apparel', value: 'apparel'},
           {title: 'Accessories', value: 'accessories'},
+          {title: 'Keychains', value: 'keychains'},
         ],
         layout: 'dropdown',
       },
