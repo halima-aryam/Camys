@@ -214,6 +214,88 @@ body::after{
   background:rgba(244,114,182,0.07);
 }
 
+/* search and sort controls */
+.shop-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+.search-wrapper {
+  position: relative;
+  flex: 1;
+}
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid rgba(244,114,182,0.18);
+  background: rgba(20, 15, 24, 0.6);
+  color: var(--txt);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.search-input:focus {
+  border-color: var(--pk);
+  background: rgba(20, 15, 24, 0.85);
+  box-shadow: 0 0 8px rgba(244,114,182,0.15);
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  transition: color 0.2s;
+  width: 14px;
+  height: 14px;
+}
+.search-input:focus + .search-icon {
+  color: var(--pk);
+}
+.sort-wrapper {
+  position: relative;
+  min-width: 140px;
+}
+.sort-select {
+  width: 100%;
+  padding: 8px 25px 8px 12px;
+  border: 1px solid rgba(244,114,182,0.18);
+  background: rgba(20, 15, 24, 0.6);
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all 0.2s ease;
+}
+.sort-select:focus, .sort-select:hover {
+  border-color: var(--pk);
+  color: var(--txt);
+  background: rgba(20, 15, 24, 0.85);
+}
+.sort-wrapper::after {
+  content: '▼';
+  font-size: 7px;
+  color: var(--muted);
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.sort-select:focus + ::after, .sort-select:hover + ::after {
+  color: var(--pk);
+}
+
 /* grid — 2 col on mobile */
 .grid{
   display:grid;
@@ -554,6 +636,24 @@ body::after{
     <button class="fp" data-cat="accessories">Accessories</button>
     <button class="fp" data-cat="keychains">Keychains</button>
   </div>
+  <div class="shop-controls">
+    <div class="search-wrapper">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="Search products..." oninput="handleSearch(this.value)" />
+    </div>
+    <div class="sort-wrapper">
+      <select class="sort-select" id="sort-select" onchange="handleSort(this.value)">
+        <option value="default">Sort: Featured</option>
+        <option value="name-asc">Name: A - Z</option>
+        <option value="name-desc">Name: Z - A</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+      </select>
+    </div>
+  </div>
   <div class="grid" id="grid"></div>
 </div>
 
@@ -704,6 +804,9 @@ document.getElementById("modal").addEventListener("touchend", e => {
 
 // Products array — loaded dynamically
 let products = [];
+let searchQuery = "";
+let currentSort = "default";
+let currentCategory = "all";
 
 async function loadProducts() {
   try {
@@ -734,10 +837,42 @@ async function loadProducts() {
 
 // Render
 function render(cat){
+  if (cat !== undefined) {
+    currentCategory = cat;
+  }
   const g = document.getElementById("grid");
   g.innerHTML = "";
-  const list = cat === "all" ? products : products.filter(p => p.cat === cat);
+  
+  // 1. Filter by category
+  let list = currentCategory === "all" ? products : products.filter(p => p.cat === currentCategory);
+  
+  // 2. Filter by search query
+  if (searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase().trim();
+    list = list.filter(p => p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)));
+  }
+  
+  // 3. Sort list
+  if (currentSort === "name-asc") {
+    list.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (currentSort === "name-desc") {
+    list.sort((a, b) => b.name.localeCompare(a.name));
+  } else if (currentSort === "price-asc") {
+    list.sort((a, b) => a.price - b.price);
+  } else if (currentSort === "price-desc") {
+    list.sort((a, b) => b.price - a.price);
+  }
+  
   document.getElementById("count").textContent = list.length + " item" + (list.length !== 1 ? "s" : "");
+  
+  if (list.length === 0) {
+    g.innerHTML = `
+      <div class="no-results" style="grid-column: span 2; text-align: center; padding: 4rem 1rem; color: var(--muted); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'Syne', sans-serif;">
+        No items match your search 🌸
+      </div>`;
+    return;
+  }
+  
   list.forEach((p, i) => {
     const c = document.createElement("div");
     c.className = "card";
@@ -757,6 +892,16 @@ function render(cat){
     c.addEventListener("click", () => openModal(p));
     g.appendChild(c);
   });
+}
+
+function handleSearch(val) {
+  searchQuery = val;
+  render();
+}
+
+function handleSort(val) {
+  currentSort = val;
+  render();
 }
 
 function addCurrentToCart() {
